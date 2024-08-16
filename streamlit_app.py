@@ -125,7 +125,7 @@ Overall, the data table provides a comparison of sales performance across all st
         })
     conn = connect_to_db(DB_NAME)
     result = execute_query("SELECT DISTINCT STORE_ID, STORE_NAME, SALES_TY, SALES_LY\nFROM claires_data.store_total;", conn)
-   st.session_state['display_df_and_nlr'] = True
+    st.session_state['display_df_and_nlr'] = True
 
 if st.session_state['display_df_and_nlr']:
     # Display DataFrame first
