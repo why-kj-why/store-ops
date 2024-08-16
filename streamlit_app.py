@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 import pymysql
+import time
 
 DB_HOST = "tellmoredb.cd24ogmcy170.us-east-1.rds.amazonaws.com"
 DB_USER = "admin"
@@ -13,6 +14,9 @@ CONVO_DB_NAME = "store_questions"
 
 if 'history' not in st.session_state:
     st.session_state['history'] = []
+
+if 'display_df_and_nlr' not in st.session_state:
+    st.session_state['display_df_and_nlr'] = False
 
 
 def connect_to_db(db_name):
@@ -75,11 +79,21 @@ for chat in st.session_state.history:
 
 user_input = st.text_input("You: ")
 
+# if st.button("STORE"):
+#     if st.session_state.history:
+#         last_chat = st.session_state.history[-1]
+#         store_question_in_db(last_chat['question'], last_chat['sql'])
+#         st.success("Last conversation stored.")
+#     else:
+#         st.warning("No conversation to store.")
+
 if st.button("STORE"):
     if st.session_state.history:
         last_chat = st.session_state.history[-1]
         store_question_in_db(last_chat['question'], last_chat['sql'])
         st.success("Last conversation stored.")
+        # Hide the DataFrame and NLR
+        st.session_state['display_df_and_nlr'] = False
     else:
         st.warning("No conversation to store.")
 
@@ -111,5 +125,12 @@ Overall, the data table provides a comparison of sales performance across all st
         })
     conn = connect_to_db(DB_NAME)
     result = execute_query("SELECT DISTINCT STORE_ID, STORE_NAME, SALES_TY, SALES_LY\nFROM claires_data.store_total;", conn)
+   st.session_state['display_df_and_nlr'] = True
+
+if st.session_state['display_df_and_nlr']:
+    # Display DataFrame first
     st.dataframe(result, height=200)
+    
+    # Delay the Natural Language Response by 5 seconds
+    time.sleep(5)
     st.write("**Natural Language Response:** The data table returned provides information on the sales performance of different stores for this year and the previous year. The table includes columns such as STORE_ID, STORE_NAME, SALES_TY (sales for this year), and SALES_LY (sales for the previous year).\n\nLooking at the data, we can observe that the sales for most stores vary between this year and the previous year. Some stores have seen an increase in sales, while others have experienced a decrease.\n\nFor example, stores like BRISTOL SUPERSTORE, CWMBRAN, and CARDIFF have seen an increase in sales this year compared to the previous year. On the other hand, stores like NEWPORT, CRIBBS CAUSEWAY, and SWANSEA have shown a decrease in sales.\n\nIt is also interesting to note that some stores have had significant changes in sales performance. For instance, stores like West End New, Budapest Arena Plaza, and Arkad Budapest have experienced a significant increase in sales this year compared to the previous year. Conversely, stores like Budapest Vaci Utca and Gyor Arkad have seen a significant decrease in sales.\n\nOverall, the data table provides a comparison of sales performance across all stores for this year against the previous year, highlighting the varying trends in sales for different stores.")
