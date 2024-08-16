@@ -12,6 +12,8 @@ DB_PORT = "3306"
 DB_NAME = "claires_data"
 CONVO_DB_NAME = "store_questions"
 
+CLAIRE_DEEP_PURPLE = '#553D94'
+
 if 'history' not in st.session_state:
     st.session_state['history'] = []
 
@@ -72,8 +74,50 @@ def store_question_in_db(question, sql_query):
     finally:
         connection.close()
 
+st.set_page_config(layout='wide', initial_sidebar_state='collapsed')
 
-st.title("Store Ops")
+def set_custom_css():
+    custom_css = """
+    <style>
+    
+        .st-emotion-cache-9aoz2h.e1vs0wn30 {
+            display: flex;
+            justify-content: center; /* Center-align the DataFrame */
+        }
+        .st-emotion-cache-9aoz2h.e1vs0wn30 table {
+            margin: 0 auto; /* Center-align the table itself */
+        }
+        
+    </style>
+    """
+    # Inject the CSS
+    st.markdown(custom_css, unsafe_allow_html=True)
+
+set_custom_css()
+
+#Load the logo 
+
+with open(r'Claires_logo.svg', 'r') as image:
+    image_data = image.read()
+    
+    
+st.logo(image=image_data)
+
+# Claire Purple top bar on Top.
+st.markdown("""
+<div style="position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: {}; z-index: 1000;">
+</div>
+""".format(CLAIRE_DEEP_PURPLE), unsafe_allow_html=True)
+
+st.markdown("""
+    <h4 style="background-color: {}; color: white; padding: 10px;">
+        Store Ops App
+    </h4>
+""".format(CLAIRE_DEEP_PURPLE), unsafe_allow_html=True)
+
+st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+
+# st.title("Store Ops")
 
 for chat in st.session_state.history:
     st.write(f"**User:** {chat['question']}")
