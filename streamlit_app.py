@@ -186,5 +186,5 @@ if st.session_state['display_df_and_nlr']:
     st.dataframe(st.session_state['last_result'], height=200)
     
     # Delay the Natural Language Response by 5 seconds
-    time.sleep(5)
+    time.sleep(1)
     st.write(st.session_state['last_nlr'])
